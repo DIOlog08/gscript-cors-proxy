@@ -2,7 +2,9 @@ export default async function handler(req, res) {
   const url = 'https://script.google.com/macros/s/AKfycbzaVBF8t9Q1HmAlsc7EK6DkTG4i8SX1BdYhHZjkESpEaAh6e9T6DvkH-ZyF5JLOMAKu/exec';
 
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
 
   if (req.method === 'OPTIONS') {
     res.status(200).end(); // Για CORS preflight
