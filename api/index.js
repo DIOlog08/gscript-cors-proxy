@@ -1,9 +1,13 @@
 export default async function handler(req, res) {
   const url = "https://script.google.com/macros/s/AKfycbzaVBF8t9Q1HmAlsc7EK6DkTG4i8SX1BdYhHZjkESpEaAh6e9T6DvkH-ZyF5JLOMAKu/exec";
 
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  const setCORS = () => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  };
+
+  setCORS();
 
   if (req.method === "OPTIONS") {
     res.status(200).end();
@@ -14,20 +18,22 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       const params = new URLSearchParams(req.query).toString();
       const response = await fetch(`${url}?${params}`);
-
       const contentType = response.headers.get("content-type") || "";
 
       if (!response.ok) {
         const errorText = await response.text();
+        setCORS();
         res.status(response.status).send(errorText || "Google Script Error");
         return;
       }
 
       if (contentType.includes("application/json")) {
         const data = await response.json();
+        setCORS();
         res.status(200).json(data);
       } else {
         const text = await response.text();
+        setCORS();
         res.status(200).send(text);
       }
 
@@ -39,12 +45,15 @@ export default async function handler(req, res) {
       });
 
       const text = await response.text();
+      setCORS();
       res.status(response.status).send(text);
 
     } else {
+      setCORS();
       res.status(405).send("Method Not Allowed");
     }
   } catch (error) {
+    setCORS();
     res.status(500).send("Internal Server Error: " + error.message);
   }
 }
