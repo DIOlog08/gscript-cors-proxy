@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const url = "https://script.google.com/macros/s/AKfycbzaVBF8t9Q1HmAlsc7EK6DkTG4i8SX1BdYhHZjkESpEaAh6e9T6DvkH-ZyF5JLOMAKu/exec";
+  const url = "https://script.google.com/macros/s/AKfycbzaVBF8t9Q1HmA1sc7EK6DKTG4i8SX1BdYhH2jk5EpEah6e9T6bVhH-zYF5JLOMAKu/exec";
 
   const setCORS = () => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -21,11 +21,10 @@ export default async function handler(req, res) {
       const contentType = response.headers.get("content-type") || "";
       const text = await response.text();
 
-      setCORS(); // ⚠️ ΞΑΝΑ για ασφάλεια πριν από κάθε απάντηση
+      setCORS();
       if (contentType.includes("application/json")) {
         res.setHeader("Content-Type", "application/json");
       }
-
       res.status(200).send(text);
 
     } else if (req.method === "POST") {
@@ -36,15 +35,15 @@ export default async function handler(req, res) {
       });
 
       const text = await response.text();
-      setCORS(); // ⚠️ ΞΑΝΑ για POST
+      setCORS();
       res.status(response.status).send(text);
 
     } else {
-      setCORS(); // ⚠️ ΞΑΝΑ
+      setCORS();
       res.status(405).send("Method Not Allowed");
     }
-  } catch (err) {
-    setCORS(); // ⚠️ ΚΑΙ στα λάθη
-    res.status(500).send("Internal Server Error: " + err.message);
+  } catch (error) {
+    setCORS();
+    res.status(500).send("Internal Server Error: " + error.message);
   }
 }
