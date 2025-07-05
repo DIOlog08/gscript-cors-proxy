@@ -19,41 +19,32 @@ export default async function handler(req, res) {
       const params = new URLSearchParams(req.query).toString();
       const response = await fetch(`${url}?${params}`);
       const contentType = response.headers.get("content-type") || "";
+      const text = await response.text();
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        setCORS();
-        res.status(response.status).send(errorText || "Google Script Error");
-        return;
-      }
-
+      setCORS(); // ⚠️ ΞΑΝΑ για ασφάλεια πριν από κάθε απάντηση
       if (contentType.includes("application/json")) {
-        const data = await response.json();
-        setCORS();
-        res.status(200).json(data);
-      } else {
-        const text = await response.text();
-        setCORS();
-        res.status(200).send(text);
+        res.setHeader("Content-Type", "application/json");
       }
+
+      res.status(200).send(text);
 
     } else if (req.method === "POST") {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(req.body),
+        body: JSON.stringify(req.body)
       });
 
       const text = await response.text();
-      setCORS();
+      setCORS(); // ⚠️ ΞΑΝΑ για POST
       res.status(response.status).send(text);
 
     } else {
-      setCORS();
+      setCORS(); // ⚠️ ΞΑΝΑ
       res.status(405).send("Method Not Allowed");
     }
-  } catch (error) {
-    setCORS();
-    res.status(500).send("Internal Server Error: " + error.message);
+  } catch (err) {
+    setCORS(); // ⚠️ ΚΑΙ στα λάθη
+    res.status(500).send("Internal Server Error: " + err.message);
   }
 }
